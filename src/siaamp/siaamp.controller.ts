@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { Controller, Get, Res, HttpStatus} from '@nestjs/common';
+import { Controller, Get, Res, HttpStatus, Query} from '@nestjs/common';
 import { SiaampService } from './siaamp.service';
 
 @Controller('siaamp')
@@ -23,7 +23,10 @@ export class SiaampController {
         }
     }
     @Get('startSiaVizite')
-    async startSiaVizite(){
-        return await this.service.startSiaVizite()
+    async startSiaVizite(
+        @Query('perioadaStart') perioadaStart: string,
+        @Query('perioadaFinish') perioadaFinish: string
+    ){
+        return await this.service.startSiaVizite(perioadaStart,perioadaFinish)
     }
 }

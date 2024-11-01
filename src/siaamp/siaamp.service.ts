@@ -46,21 +46,24 @@ export class SiaampService {
         } 
     }
 
-    async startSiaVizite(){      
+    async startSiaVizite(perioadaStart:string,perioadaFinish:string){      
+        const page = await this.browser.newPage();
         try {
-            const page = await this.browser.newPage();
-            //await page.goto('https://sia.amp.md/siaamp/');
             await page.goto('https://sia.amp.md/siaamp/mpassUsers.html');  
             const operatorStatistica = ".ui-datagrid-row>td:nth-child(3)>div>div>form>input:nth-child(6)"
             await page.waitForSelector(operatorStatistica)
             await page.click(operatorStatistica)
 
             await this.viziteService.Pas1(page)
-            await this.viziteService.Pas2(page)
+
+            await this.viziteService.Pas2(page,perioadaStart,perioadaFinish)
 
         } 
         catch (error) {
             console.log(error)
+            // Take a screenshot and save it to the specified path
+            const filePath = path.resolve(__dirname, '../../screenshot.png');
+            await page.screenshot({ path: filePath });
             return `Error while scraping job listings: ${error}`;
         }
     }
