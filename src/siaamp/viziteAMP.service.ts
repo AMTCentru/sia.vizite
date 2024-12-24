@@ -55,88 +55,51 @@ export class SiaampViziteAMP {
       const select = document.querySelector(StopDate) as HTMLSelectElement;
       select.value = perioadaFinish; // Set the desired value
     }, perioadaFinish);
-    let i = 2
+    let i = 2, j = 2
 
-    try {
-      for (i; i <= 3; i++) {
-        console.log(`i = ${i}`)
-        try {
-          const clickLISubDiv = `body > div:nth-of-type(5) > form > div:nth-of-type(2) > div > div:nth-of-type(2) > div:nth-of-type(2) > table:nth-of-type(1) > tbody > tr:nth-of-type(1) > td:nth-of-type(2) > div > div:nth-of-type(3)`;
-          await page.waitForSelector(clickLISubDiv);
-          await page.click(clickLISubDiv);
-          await this.isHidden(page);
-          await this.delay(1000);
+    for (i; i <= 3; i++) {
+      console.log(`i = ${i}`)
+      const clickLISubDiv = `body > div:nth-of-type(5) > form > div:nth-of-type(2) > div > div:nth-of-type(2) > div:nth-of-type(2) > table:nth-of-type(1) > tbody > tr:nth-of-type(1) > td:nth-of-type(2) > div > div:nth-of-type(3)`;
+      await page.waitForSelector(clickLISubDiv);
+      await page.click(clickLISubDiv);
+      await this.isHidden(page);
+      await this.delay(1000);
 
-          let clickSubDiv = `body > div:nth-of-type(12) > div > ul > li:nth-of-type(${i})`;
-          await page.waitForSelector(clickSubDiv);
-          await page.click(clickSubDiv);
-          await this.isHidden(page);
+      let clickSubDiv = `body > div:nth-of-type(12) > div > ul > li:nth-of-type(${i})`;
+      await page.waitForSelector(clickSubDiv);
+      await page.click(clickSubDiv);
+      await this.isHidden(page);
 
-          const NumberSpecialite = await page.evaluate(() => {
-            return document.querySelectorAll("body > div:nth-of-type(13) > div > ul > li").length;
-          });
-          let j = 2 
-            while (j < NumberSpecialite+1) {
-              console.log(`j = ${j}`);
-            try {
-              const clickLIMedicDeFamilie = `body > div:nth-of-type(5) > form > div:nth-of-type(2) > div > div:nth-of-type(2) > div:nth-of-type(2) > table:nth-of-type(1) > tbody > tr:nth-of-type(2) > td:nth-of-type(2) > div > div:nth-of-type(3)`;
-              await page.waitForSelector(clickLIMedicDeFamilie);
-              await page.click(clickLIMedicDeFamilie);
-              await this.isHidden(page);
+      const NumberSpecialite = await page.evaluate(() => {
+        return document.querySelectorAll("body > div:nth-of-type(13) > div > ul > li").length;
+      });
+      while (j < NumberSpecialite+1) {
+        console.log(`j = ${j}`);
 
-              let clickSpecialitate = `body > div:nth-of-type(13) > div > ul > li:nth-of-type(${j})`;
-              await page.waitForSelector(clickSpecialitate);
-              await page.click(clickSpecialitate);
-              await this.isHidden(page);
+        const clickLIMedicDeFamilie = `body > div:nth-of-type(5) > form > div:nth-of-type(2) > div > div:nth-of-type(2) > div:nth-of-type(2) > table:nth-of-type(1) > tbody > tr:nth-of-type(2) > td:nth-of-type(2) > div > div:nth-of-type(3)`;
+        await page.waitForSelector(clickLIMedicDeFamilie);
+        await page.click(clickLIMedicDeFamilie);
+        await this.isHidden(page);
 
-              const clickButonCauta = "body > div:nth-of-type(5) > form > div:nth-of-type(2) > div > div:nth-of-type(2) > div:nth-of-type(2) > table:nth-of-type(2) > tbody > tr > td:nth-of-type(1) > button > span:nth-of-type(2)";
-              await page.waitForSelector(clickButonCauta);
-              await page.click(clickButonCauta);
+        let clickSpecialitate = `body > div:nth-of-type(13) > div > ul > li:nth-of-type(${j})`;
+        await page.waitForSelector(clickSpecialitate);
+        await page.click(clickSpecialitate);
+        await this.isHidden(page);
 
-              await this.delay(2000);
-              await this.isHidden(page);
+        const clickButonCauta = "body > div:nth-of-type(5) > form > div:nth-of-type(2) > div > div:nth-of-type(2) > div:nth-of-type(2) > table:nth-of-type(2) > tbody > tr > td:nth-of-type(1) > button > span:nth-of-type(2)";
+        await page.waitForSelector(clickButonCauta);
+        await page.click(clickButonCauta);
 
-              const dateTabelData = await this.dataTable(page);
-              if (dateTabelData != null) {
-                for (const el of dateTabelData) {
-                  const receptieDto = new CreateViziteAMSDto();
-                  receptieDto.subdiv = el.subdiv;
-                  receptieDto.specialitate = el.specialitate;
-                  receptieDto.numeMedic = el.numeMedic;
-                  receptieDto.nrRow = el.nrRow;
-                  receptieDto.dataAdresarii = el.dataAdresarii;
-                  receptieDto.idnpPacient = el.idnpPacient;
-                  receptieDto.numePrenumePacient = el.numePrenumePacient;
-                  receptieDto.dataNasterePacient = el.dataNasterePacient;
-                  receptieDto.sexPacient = el.sexPacient;
-                  receptieDto.statutPacient = el.statutPacient;
-                  receptieDto.adresaPacient = el.adresaPacient;
-                  receptieDto.diagnosticPacient = el.diagnosticPacient;
-                  receptieDto.tipVizita = el.tipVizita;
+        await this.isHidden(page);
 
-                  try {
-                    await this.viziteAmsService.create(receptieDto);
-                  } catch (error) {
-                    console.error('Error creating vizite AMS:', error);
-                  }
-                }
-              }
-              j++
-            } catch (error) {
-                console.error(`Error at j=${j}:`, error);
-            }
-          }
-        } catch (error) {
-            console.error(`Error at i=${i}:`, error);
-        }
+        await this.dataTable(page);
+        j++
       }
-    } catch (error) {
-        console.error('An error occurred:', error);
+      j = 2
     }
   }   
  
   async dataTable(page: Page) {
-    let datePacient = [];
 
     // Check if the table exists
     const allTableExists = await page.evaluate(() => {
@@ -194,70 +157,57 @@ export class SiaampViziteAMP {
       })
       console.log(numeMedic); // Outputs: GHENCIU ION
 
-
       // Load the table data with Cheerio
       const $$ = cheerio.load(tabelReceptie);
-      $$('tr').each((_, element) => {
-          const cells = $$(element).find('td');
-          if (cells.length) {
-            const nrRow = $$(cells[0]).text().trim();
-            const formatDate = (dateString) => {
-              const [day, month, year] = dateString.split('/');
-              return `${year}-${month}-${day}`; // Convert to YYYY-MM-DD
-            };
-            const dataAdresarii = formatDate($$(cells[1]).text().trim());
-            const Idnp = $$(cells[2]).text().trim();
-            const idnpPacient = Idnp.length === 12 ? `0${Idnp}` : Idnp;
-            const numePrenumePacient = $$(cells[3]).text().trim();
-            const dataNasterePacient = formatDate($$(cells[4]).text().trim());
-            const sexPacient = $$(cells[5]).text().trim();
-            const statutPacient = $$(cells[6]).text().trim();
-            const adresaPacient = $$(cells[7]).text().trim();
-            const diagnosticPacient = $$(cells[8]).text().trim();
-            const tipVizita = $$(cells[9]).text().trim();
+      const rows = $$('tr');  // Selectează toate rândurile
+      for (let i = 0; i < rows.length; i++) {
+        const element = rows[i];
+        process.stdout.write(`Număr de rind:  ${i}\r`);
+        const cells = $$(element).find('td');
+        if (cells.length) {
+          const nrRow = $$(cells[0]).text().trim();
+          const formatDate = (dateString) => {
+            const [day, month, year] = dateString.split('/');
+            return `${year}-${month}-${day}`; // Convert to YYYY-MM-DD
+          };
+          const dataAdresarii = formatDate($$(cells[1]).text().trim());
+          const Idnp = $$(cells[2]).text().trim();
+          const idnpPacient = Idnp.length === 12 ? `0${Idnp}` : Idnp;
+          const numePrenumePacient = $$(cells[3]).text().trim();
+          const dataNasterePacient = formatDate($$(cells[4]).text().trim());
+          const sexPacient = $$(cells[5]).text().trim();
+          const statutPacient = $$(cells[6]).text().trim();
+          const adresaPacient = $$(cells[7]).text().trim();
+          const diagnosticPacient = $$(cells[8]).text().trim();
+          const tipVizita = $$(cells[9]).text().trim();
 
-            datePacient.push({
-              subdiv,
-              specialitate ,
-              numeMedic,
-              nrRow,
-              dataAdresarii,
-              idnpPacient,
-              numePrenumePacient,
-              dataNasterePacient,
-              sexPacient,
-              statutPacient,
-              adresaPacient,
-              diagnosticPacient,
-              tipVizita,
-            })  
-          }
-      });
-      return datePacient; // Return the collected patient data
+          const receptieDto = new CreateViziteAMSDto();
+          receptieDto.subdiv = subdiv;
+          receptieDto.specialitate = specialitate;
+          receptieDto.numeMedic = numeMedic;
+          receptieDto.nrRow = nrRow;
+          receptieDto.dataAdresarii = dataAdresarii;
+          receptieDto.idnpPacient = idnpPacient;
+          receptieDto.numePrenumePacient = numePrenumePacient;
+          receptieDto.dataNasterePacient = dataNasterePacient;
+          receptieDto.sexPacient = sexPacient;
+          receptieDto.statutPacient = statutPacient;
+          receptieDto.adresaPacient = adresaPacient;
+          receptieDto.diagnosticPacient = diagnosticPacient;
+          receptieDto.tipVizita = tipVizita;
+
+          await this.viziteAmsService.create(receptieDto);
+        }
+      };
+      console.log('\n')
     }
     return null
   }  
   async isHidden(page: Page) {
-    let value;
-    let attempts = 0; // Track the number of attempts
-  
-    do {
-      await this.delay(5000); // Wait for a short duration
-      value = await page.evaluate(() => {
-        const element = document.querySelector('body > div:nth-child(5)');
-        return element && element.getAttribute('style') 
-          ? element.getAttribute('style').includes('hidden') 
-          : false; // Check if the element exists and has the hidden style
-      });
-      attempts++; // Increment the attempts counter
-  
-      // Reload the page if the limit of attempts is exceeded
-      if (attempts > 10) {
-        await page.reload();
-        console.log('Reloading page due to hidden element');
-        attempts = 0; // Reset attempts after reloading
-      }
-    } while (value !== true); // Continue until the element is no longer hidden
-    return value; // Return the final state
+    const selector ='body > div:nth-child(5)'
+    await page.waitForFunction((selector) => {
+      const element = document.querySelector(selector);
+      return element && element.getAttribute('style').includes('hidden') 
+    },{},selector);
   }
 }

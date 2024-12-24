@@ -22,7 +22,7 @@ export class SiaampService {
             console.log('Launching Puppeteer...');
             this.browser = await puppeteer.launch({
                 executablePath: '/usr/bin/google-chrome-stable',
-                args: ['--no-sandbox'],
+                args: ['--no-sandbox', '--disable-setuid-sandbox'],
                 headless: false,
                 defaultViewport: { width: 1920, height: 1080 },
             });
@@ -33,10 +33,12 @@ export class SiaampService {
             const butonLogare = "#formMPass > div > div:nth-child(2) > a"
             await page.waitForSelector(butonLogare)
             await page.click(butonLogare)
-            const qr = "#evosign-desktop"
+            const qr = "#evosign-qr"
+            await page.waitForSelector(qr)
             await page.waitForFunction((selector) => {
-                return document.querySelector(selector) !== null;
-            }, {}, qr);
+                const img = document.querySelector(selector) as HTMLImageElement;
+                return img && img.naturalWidth > 0 && img.naturalHeight > 0;
+            }, {timeout: 5000}, qr);
             
             // Take a screenshot and save it to the specified path
             const filePath = path.resolve(__dirname, '../../screenshot.png');
