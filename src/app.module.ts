@@ -4,6 +4,8 @@ import { ViziteModule } from './vizite/vizite.module';
 import { ViziteAmsModel } from './vizite/viziteAMS.model';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule } from '@nestjs/config';
+import { TicheteModule } from './tichete/tichete.module';
+import { TicheteStatModel } from './tichete/tichete.model';
 
 @Module({
   imports: [
@@ -20,9 +22,10 @@ import { ConfigModule } from '@nestjs/config';
       database: process.env.DB_NAME,
       models: [
         ViziteAmsModel,
+        TicheteStatModel
       ],
     }),
-    SiaampModule, ViziteModule
+    SiaampModule, ViziteModule, TicheteModule
   ],
 })
 export class AppModule {}

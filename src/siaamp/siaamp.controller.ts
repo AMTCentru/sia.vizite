@@ -5,9 +5,7 @@ import { SiaampService } from './siaamp.service';
 @Controller('siaamp')
 export class SiaampController {
 
-    constructor(
-        private service: SiaampService
-    ) {}
+    constructor(private service: SiaampService) {}
 
     @Get('logareSiaVizite')
     async logareSiaVizite(@Res() res: Response): Promise<void> {
@@ -22,11 +20,57 @@ export class SiaampController {
             });
         }
     }
-    @Get('startSiaVizite')
-    async startSiaVizite(
+    @Get('startSiaViziteAMS')
+    async startSiaViziteAMS(
+        @Res() res: Response,
         @Query('perioadaStart') perioadaStart: string,
         @Query('perioadaFinish') perioadaFinish: string
     ){
-        return await this.service.startSiaVizite(perioadaStart,perioadaFinish)
+        try {
+            const data = await this.service.startSiaViziteAMS(perioadaStart,perioadaFinish)
+            res.setHeader('Content-Type', 'image/png'); // Set the content type for a PNG image
+            res.status(HttpStatus.OK).send(data); // Send the image buffer as response
+        } catch (error) {
+            console.error('Error during login:', error);
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+                message: 'An error occurred during login.',
+            });
+        }
+    }
+
+    @Get('startSiaViziteAMP')
+    async startSiaViziteAMP(
+        @Res() res: Response,
+        @Query('perioadaStart') perioadaStart: string,
+        @Query('perioadaFinish') perioadaFinish: string
+    ){
+        try {
+            const data = await this.service.startSiaViziteAMP(perioadaStart,perioadaFinish)
+            res.setHeader('Content-Type', 'image/png'); // Set the content type for a PNG image
+            res.status(HttpStatus.OK).send(data); // Send the image buffer as response
+        } catch (error) {
+            console.error('Error during login:', error);
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+                message: 'An error occurred during login.',
+            });
+        }
+    }
+
+    @Get('startSiaTicheteStat')
+    async startSiaTicheteStat(
+        @Res() res: Response,
+        @Query('perioadaStart') perioadaStart: string,
+        @Query('perioadaFinish') perioadaFinish: string
+    ){
+        try {
+            const data = await this.service.startSiaTicheteStat(perioadaStart,perioadaFinish)
+            res.setHeader('Content-Type', 'image/png'); // Set the content type for a PNG image
+            res.status(HttpStatus.OK).send(data); // Send the image buffer as response
+        } catch (error) {
+            console.error('Error during login:', error);
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+                message: 'An error occurred during login.',
+            });
+        }
     }
 }

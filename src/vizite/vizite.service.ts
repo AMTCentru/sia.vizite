@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ViziteAmsModel } from './viziteAMS.model';
 import { InjectModel } from '@nestjs/sequelize';
-import { CreateViziteAMSDto } from './create.dto';
+import { CreateViziteAMSDto } from './createAMS.dto';
 
 @Injectable()
 export class ViziteService {

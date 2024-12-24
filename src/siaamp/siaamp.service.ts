@@ -2,14 +2,20 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { readFile } from 'fs/promises';
 import * as path from 'path';
 import puppeteer, { Browser} from 'puppeteer';
-import { SiaampVizite } from './vizite.service';
+import { SiaampViziteAMS } from './viziteAMS.service';
+import { SiaampViziteAMP } from './viziteAMP.service';
+import { statisticaTicheteService } from './tichete.service';
 
 @Injectable()
 export class SiaampService {
 
     private browser: Browser;
 
-    constructor(private viziteService : SiaampVizite) {}
+    constructor(
+        private viziteAmsService : SiaampViziteAMS,
+        private viziteAmpService : SiaampViziteAMP,
+        private ticheteService : statisticaTicheteService
+    ) {}
 
     async logareSiaVizite(): Promise<Buffer> {
         try {
@@ -34,7 +40,16 @@ export class SiaampService {
             
             // Take a screenshot and save it to the specified path
             const filePath = path.resolve(__dirname, '../../screenshot.png');
-            await page.screenshot({ path: filePath });
+            const boundingBox = await (await page.$(qr)).boundingBox();
+            await page.screenshot({ 
+                path: filePath,
+                clip: {
+                    x: boundingBox.x,
+                    y: boundingBox.y,
+                    width: boundingBox.width,
+                    height: boundingBox.height,
+                } 
+             });
 
             // Read the screenshot file
             const screenshotBuffer = await readFile(filePath);
@@ -46,7 +61,7 @@ export class SiaampService {
         } 
     }
 
-    async startSiaVizite(perioadaStart:string,perioadaFinish:string){      
+    async startSiaViziteAMS(perioadaStart:string,perioadaFinish:string): Promise<Buffer> {      
         const page = await this.browser.newPage();
         try {
             await page.goto('https://sia.amp.md/siaamp/mpassUsers.html');  
@@ -54,17 +69,63 @@ export class SiaampService {
             await page.waitForSelector(operatorStatistica)
             await page.click(operatorStatistica)
 
-            await this.viziteService.Pas1(page)
+            await this.viziteAmsService.Pas1(page)
 
-            await this.viziteService.Pas2(page,perioadaStart,perioadaFinish)
+            await this.viziteAmsService.Pas2(page,perioadaStart,perioadaFinish)
 
         } 
         catch (error) {
             console.log(error)
             // Take a screenshot and save it to the specified path
-            const filePath = path.resolve(__dirname, '../../screenshot.png');
+            const filePath = path.resolve(__dirname, '../../viziteAmsService.png');
             await page.screenshot({ path: filePath });
-            return `Error while scraping job listings: ${error}`;
+            const screenshotBuffer = await readFile(filePath);
+            return screenshotBuffer;
+        }
+    }
+
+    async startSiaViziteAMP(perioadaStart:string,perioadaFinish:string): Promise<Buffer> {      
+        const page = await this.browser.newPage();
+        try {
+            await page.goto('https://sia.amp.md/siaamp/mpassUsers.html');  
+            const operatorStatistica = ".ui-datagrid-row>td:nth-child(3)>div>div>form>input:nth-child(6)"
+            await page.waitForSelector(operatorStatistica)
+            await page.click(operatorStatistica)
+
+            await this.viziteAmpService.Pas1(page)
+
+            await this.viziteAmpService.Pas2(page,perioadaStart,perioadaFinish)
+
+        } 
+        catch (error) {
+            console.log(error)
+            // Take a screenshot and save it to the specified path
+            const filePath = path.resolve(__dirname, '../../viziteAmpService.png');
+            await page.screenshot({ path: filePath });
+            const screenshotBuffer = await readFile(filePath);
+            return screenshotBuffer;
+        }
+    }
+
+    async startSiaTicheteStat(perioadaStart:string,perioadaFinish:string): Promise<Buffer> {      
+        const page = await this.browser.newPage();
+        try {
+            await page.goto('https://sia.amp.md/siaamp/mpassUsers.html');  
+            const operatorStatistica = ".ui-datagrid-row>td:nth-child(3)>div>div>form>input:nth-child(6)"
+            await page.waitForSelector(operatorStatistica)
+            await page.click(operatorStatistica)
+
+            await this.ticheteService.Pas1(page)
+
+            await this.ticheteService.Pas2(page,perioadaStart,perioadaFinish)
+        } 
+        catch (error) {
+            console.log(error)
+            // Take a screenshot and save it to the specified path
+            const filePath = path.resolve(__dirname, '../../startSiaTicheteStat.png');
+            await page.screenshot({ path: filePath });
+            const screenshotBuffer = await readFile(filePath);
+            return screenshotBuffer;
         }
     }
 }
