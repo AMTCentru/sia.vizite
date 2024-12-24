@@ -63,7 +63,14 @@ export class SiaampService {
         } 
     }
 
-    async startSiaViziteAMS(perioadaStart:string,perioadaFinish:string): Promise<Buffer> {      
+    async startSiaViziteAMS(
+        perioadaStart:string,
+        perioadaFinish:string,
+        i : number,
+        j : number,
+        k : number
+    ): Promise<Buffer> {      
+        console.log(perioadaStart,perioadaFinish,i,j,k)
         const page = await this.browser.newPage();
         try {
             await page.goto('https://sia.amp.md/siaamp/mpassUsers.html');  
@@ -72,8 +79,7 @@ export class SiaampService {
             await page.click(operatorStatistica)
 
             await this.viziteAmsService.Pas1(page)
-
-            await this.viziteAmsService.Pas2(page,perioadaStart,perioadaFinish)
+            await this.viziteAmsService.Pas2(page,perioadaStart,perioadaFinish,i,j,k)
 
         } 
         catch (error) {
@@ -86,7 +92,12 @@ export class SiaampService {
         }
     }
 
-    async startSiaViziteAMP(perioadaStart:string,perioadaFinish:string): Promise<Buffer> {      
+    async startSiaViziteAMP(
+        perioadaStart:string,
+        perioadaFinish:string,
+        i : number,
+        j : number
+    ): Promise<Buffer> {      
         const page = await this.browser.newPage();
         try {
             await page.goto('https://sia.amp.md/siaamp/mpassUsers.html');  
@@ -96,7 +107,7 @@ export class SiaampService {
 
             await this.viziteAmpService.Pas1(page)
 
-            await this.viziteAmpService.Pas2(page,perioadaStart,perioadaFinish)
+            await this.viziteAmpService.Pas2(page,perioadaStart,perioadaFinish,i,j)
 
         } 
         catch (error) {

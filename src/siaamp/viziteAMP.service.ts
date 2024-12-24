@@ -35,7 +35,7 @@ export class SiaampViziteAMP {
     await page.waitForSelector(buttonCurataFiltre)
     await page.click(buttonCurataFiltre); // Perform the click action
   }
-  async Pas2(page: Page,perioadaStart:string,perioadaFinish:string){
+  async Pas2(page: Page,perioadaStart:string,perioadaFinish:string,i:number,j:number){
 
     await this.isHidden(page)
     console.log('Start Pas2')
@@ -55,7 +55,7 @@ export class SiaampViziteAMP {
       const select = document.querySelector(StopDate) as HTMLSelectElement;
       select.value = perioadaFinish; // Set the desired value
     }, perioadaFinish);
-    let i = 2, j = 2
+    //let i = 2, j = 2
 
     for (i; i <= 3; i++) {
       console.log(`i = ${i}`)
